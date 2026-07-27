@@ -5,9 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5">
   <title>ĀyurVana · Ayurvedic</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- html2canvas for screenshot -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- jsPDF for PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     /* ============================================
-       PRODUCT 1: CSS STYLES
+       PRODUCT 1: CSS STYLES (MOBILE-FIRST)
        ============================================ */
     * {
       margin: 0;
@@ -21,45 +25,47 @@
       --accent: #8BC34A;
       --dark-green: #1B5E20;
       --white-card: #ffffff;
-      --shadow: 0 12px 28px rgba(0,20,0,0.08), 0 4px 12px rgba(0,0,0,0.02);
-      --radius: 20px;
+      --herbal-green: #e8f5e9;
+      --shadow: 0 4px 16px rgba(0,20,0,0.06), 0 2px 8px rgba(0,0,0,0.02);
+      --radius: 16px;
       --transition: all 0.25s ease;
     }
     body {
-      background: var(--secondary);
+      background: var(--herbal-green);
       color: #1e2b1e;
       scroll-behavior: smooth;
+      min-height: 100vh;
     }
-    /* sticky nav - larger logo */
     .sticky-nav {
       position: sticky;
       top: 0;
       z-index: 100;
-      background: rgba(245,241,232,0.92);
+      background: rgba(232, 245, 233, 0.95);
       backdrop-filter: blur(8px);
-      box-shadow: 0 4px 20px rgba(46,125,50,0.08);
-      border-bottom: 1px solid rgba(46,125,50,0.10);
-      padding: 0.8rem 2rem;
+      box-shadow: 0 2px 12px rgba(46,125,50,0.06);
+      border-bottom: 1px solid rgba(46,125,50,0.08);
+      padding: 0.6rem 1rem;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
+      gap: 0.5rem;
     }
     .logo-area {
       display: flex;
       align-items: center;
-      gap: 0.8rem;
+      gap: 0.5rem;
     }
     .logo-area img {
-      height: 65px;
+      height: 40px;
       width: auto;
       object-fit: contain;
     }
     .logo-title {
-      font-size: 2rem;
+      font-size: 1.3rem;
       font-weight: 700;
       color: var(--primary);
-      letter-spacing: -0.5px;
+      letter-spacing: -0.3px;
     }
     .logo-title span {
       font-weight: 300;
@@ -68,17 +74,21 @@
     .nav-links {
       display: flex;
       flex-wrap: wrap;
-      gap: 1.8rem;
+      gap: 0.8rem;
       font-weight: 500;
+      font-size: 0.85rem;
     }
     .nav-links a {
       text-decoration: none;
       color: #1e3a1e;
-      font-size: 1.05rem;
-      padding: 0.3rem 0;
+      padding: 0.2rem 0.3rem;
       border-bottom: 2px solid transparent;
       transition: var(--transition);
       cursor: pointer;
+      font-size: 0.8rem;
+    }
+    .nav-links a i {
+      margin-right: 2px;
     }
     .nav-links a:hover, .nav-links a.active {
       border-bottom-color: var(--accent);
@@ -87,89 +97,96 @@
     .nav-actions {
       display: flex;
       align-items: center;
-      gap: 1.2rem;
+      gap: 0.8rem;
     }
     .nav-actions i {
-      font-size: 1.4rem;
+      font-size: 1.1rem;
       color: var(--primary);
       cursor: pointer;
       transition: var(--transition);
     }
     .nav-actions i:hover { color: var(--accent); transform: scale(1.05); }
     .container {
-      max-width: 1300px;
+      max-width: 1200px;
       margin: 0 auto;
-      padding: 1.5rem 1.2rem;
+      padding: 0.8rem 0.8rem;
     }
-    section { margin-bottom: 3.5rem; }
-    /* carousel */
+    section { margin-bottom: 2rem; }
     .carousel-wrap {
       overflow: hidden;
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       background: white;
-      margin: 1.8rem 0 2.8rem;
+      margin: 0.8rem 0 1.5rem;
       cursor: pointer;
     }
     .carousel-track {
       display: flex;
-      animation: slideLeft 22s linear infinite;
+      animation: slideLeft 20s linear infinite;
       width: max-content;
     }
     .carousel-track img {
-      width: 340px;
-      height: 200px;
+      width: 200px;
+      height: 130px;
       object-fit: cover;
       flex-shrink: 0;
       border-right: 2px solid #eae3d4;
       transition: transform 0.4s ease;
     }
-    .carousel-track img:hover { transform: scale(1.01); }
+    .carousel-track img:hover { transform: scale(1.02); }
     @keyframes slideLeft {
       0% { transform: translateX(0); }
       100% { transform: translateX(-50%); }
     }
-    /* about & banner */
     .about-grid {
       display: flex;
       flex-wrap: wrap;
-      gap: 2rem;
+      gap: 1.2rem;
       background: white;
-      padding: 2rem 2.2rem;
+      padding: 1.2rem 1.2rem;
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       align-items: center;
     }
-    .about-text { flex: 2 1 280px; }
-    .about-text h2 { color: var(--primary); margin-bottom: 0.8rem; font-size: 1.9rem; }
-    .about-text p { line-height: 1.7; color: #2a3a2a; }
+    .about-text { flex: 1 1 100%; }
+    .about-text h2 { 
+      color: var(--primary); 
+      margin-bottom: 0.5rem; 
+      font-size: 1.4rem; 
+    }
+    .about-text p { 
+      line-height: 1.6; 
+      color: #2a3a2a; 
+      font-size: 0.95rem;
+    }
     .heritage-image {
-      flex: 1;
-      min-width: 160px;
-      border-radius: 30px;
+      flex: 1 1 100%;
+      border-radius: var(--radius);
       overflow: hidden;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
     }
     .heritage-image img {
       width: 100%;
-      height: 200px;
+      height: 150px;
       object-fit: cover;
       display: block;
     }
-    /* bottom banner with image */
     .bottom-banner {
-      margin: 2.8rem 0 1.5rem;
+      margin: 1.5rem 0 1rem;
       border-radius: var(--radius);
       overflow: hidden;
       box-shadow: var(--shadow);
       position: relative;
-      min-height: 180px;
+      min-height: 140px;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: space-between;
-      padding: 2rem 2.5rem;
-      background: linear-gradient(135deg, rgba(30,74,30,0.85), rgba(46,125,50,0.85));
+      justify-content: center;
+      text-align: center;
+      padding: 1.5rem 1.2rem;
+      background: linear-gradient(135deg, rgba(30,74,30,0.88), rgba(46,125,50,0.88));
       background-blend-mode: overlay;
+      gap: 0.8rem;
     }
     .bottom-banner img {
       position: absolute;
@@ -184,9 +201,9 @@
       z-index: 1;
     }
     .bottom-banner h2 {
-      font-size: 2rem;
+      font-size: 1.3rem;
       font-weight: 400;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
       color: white;
       text-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
@@ -194,49 +211,48 @@
     .bottom-banner .btn {
       background: var(--accent);
       color: #1a3a1a;
-      padding: 0.8rem 2rem;
-      border-radius: 60px;
+      padding: 0.6rem 1.5rem;
+      border-radius: 40px;
       font-weight: 600;
       border: none;
-      font-size: 1rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      font-size: 0.9rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
       transition: var(--transition);
       cursor: pointer;
       text-decoration: none;
       display: inline-block;
     }
-    .bottom-banner .btn:hover { transform: scale(1.02); background: #9fd65f; }
-    /* product cards */
+    .bottom-banner .btn:hover { transform: scale(1.03); background: #9fd65f; }
     .search-bar {
       display: flex;
       align-items: center;
       gap: 0.6rem;
       background: white;
-      padding: 0.3rem 1.2rem;
-      border-radius: 60px;
+      padding: 0.2rem 1rem;
+      border-radius: 40px;
       box-shadow: var(--shadow);
-      max-width: 420px;
-      margin-bottom: 2.2rem;
+      max-width: 100%;
+      margin-bottom: 1.2rem;
       border: 1px solid #d9d0bd;
     }
-    .search-bar i { color: var(--primary); font-size: 1.1rem; }
+    .search-bar i { color: var(--primary); font-size: 1rem; }
     .search-bar input {
       border: none;
-      padding: 0.8rem 0.2rem;
+      padding: 0.6rem 0.2rem;
       width: 100%;
       background: transparent;
       outline: none;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
     }
     .product-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 2rem 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1rem 0.8rem;
     }
     .product-card {
       background: var(--white-card);
       border-radius: var(--radius);
-      padding: 1.2rem 1rem 1.5rem;
+      padding: 0.8rem 0.7rem 1rem;
       box-shadow: var(--shadow);
       transition: var(--transition);
       animation: fadeUp 0.5s ease;
@@ -246,88 +262,101 @@
       cursor: pointer;
     }
     .product-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 35px rgba(46,125,50,0.10);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(46,125,50,0.08);
     }
     .product-card img {
       width: 100%;
-      height: 140px;
+      height: 110px;
       object-fit: cover;
-      border-radius: 16px;
+      border-radius: 12px;
       background: #e7dfcf;
       transition: transform 0.4s ease;
     }
-    .product-card img:hover { transform: scale(1.03); }
-    .product-card h4 { margin: 0.8rem 0 0.2rem; font-weight: 600; color: #1b3a1b; }
-    .product-card .generic { font-size: 0.8rem; color: #5f6f5a; letter-spacing: 0.3px; }
-    .product-card .price { font-weight: 700; color: var(--primary); font-size: 1.2rem; margin: 0.5rem 0; }
+    .product-card img:hover { transform: scale(1.02); }
+    .product-card h4 { 
+      margin: 0.5rem 0 0.1rem; 
+      font-weight: 600; 
+      color: #1b3a1b; 
+      font-size: 0.95rem;
+    }
+    .product-card .generic { 
+      font-size: 0.7rem; 
+      color: #5f6f5a; 
+      letter-spacing: 0.2px; 
+    }
+    .product-card .price { 
+      font-weight: 700; 
+      color: var(--primary); 
+      font-size: 1rem; 
+      margin: 0.3rem 0; 
+    }
     .qty-control {
       display: flex;
       align-items: center;
-      gap: 0.8rem;
-      margin: 0.6rem 0 0.8rem;
+      gap: 0.5rem;
+      margin: 0.4rem 0 0.5rem;
     }
     .qty-control button {
       background: var(--secondary);
       border: none;
-      width: 30px;
-      height: 30px;
-      border-radius: 40px;
-      font-size: 1.2rem;
+      width: 26px;
+      height: 26px;
+      border-radius: 30px;
+      font-size: 1rem;
       font-weight: 600;
       color: var(--primary);
       cursor: pointer;
       transition: var(--transition);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     }
     .qty-control button:hover { background: var(--accent); color: white; }
-    .qty-control span { min-width: 24px; text-align: center; font-weight: 600; }
+    .qty-control span { min-width: 20px; text-align: center; font-weight: 600; font-size: 0.9rem; }
     .card-actions {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.5rem;
+      gap: 0.3rem;
       margin-top: 0.2rem;
     }
     .btn-primary {
       background: var(--dark-green);
       border: none;
       color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 40px;
+      padding: 0.3rem 0.6rem;
+      border-radius: 30px;
       font-weight: 600;
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       cursor: pointer;
       transition: var(--transition);
       flex: 1 1 auto;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 4px;
+      gap: 3px;
     }
-    .btn-primary i { font-size: 0.8rem; }
+    .btn-primary i { font-size: 0.7rem; }
     .btn-primary:hover { background: #1f4f1f; transform: scale(0.97); }
     .btn-whatsapp {
       background: #25D366;
       color: white;
       border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 40px;
+      padding: 0.3rem 0.6rem;
+      border-radius: 30px;
       font-weight: 600;
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       cursor: pointer;
       transition: var(--transition);
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
     }
     .btn-whatsapp:hover { background: #1da851; }
-    /* cart */
     .cart-section {
       background: white;
       border-radius: var(--radius);
-      padding: 1.8rem 1.8rem;
+      padding: 1.2rem 1rem;
       box-shadow: var(--shadow);
-      margin-top: 2rem;
+      margin-top: 1.2rem;
     }
     .cart-item {
       display: flex;
@@ -335,281 +364,456 @@
       align-items: center;
       justify-content: space-between;
       border-bottom: 1px solid #e3dccc;
-      padding: 0.8rem 0;
+      padding: 0.6rem 0;
+      gap: 0.5rem;
     }
     .cart-item:last-child { border-bottom: none; }
     .cart-item-info {
       display: flex;
       align-items: center;
-      gap: 1.2rem;
-      flex: 2 1 180px;
+      gap: 0.8rem;
+      flex: 1 1 140px;
     }
     .cart-item-info img {
-      width: 48px;
-      height: 48px;
+      width: 40px;
+      height: 40px;
       object-fit: cover;
-      border-radius: 12px;
+      border-radius: 10px;
       background: #d9d0bd;
     }
+    .cart-item-info div { font-size: 0.85rem; }
     .cart-qty {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
+      gap: 0.4rem;
     }
     .cart-qty button {
       background: #f0eadb;
       border: none;
-      width: 28px;
-      height: 28px;
+      width: 24px;
+      height: 24px;
       border-radius: 30px;
-      font-size: 1rem;
+      font-size: 0.9rem;
       font-weight: 700;
       cursor: pointer;
     }
     .cart-qty button:hover { background: var(--accent); color: white; }
+    .cart-qty span { font-size: 0.85rem; font-weight: 600; min-width: 20px; text-align: center; }
     .remove-btn {
       background: transparent;
       border: none;
       color: #b33;
-      font-size: 1.2rem;
+      font-size: 1rem;
       cursor: pointer;
       transition: var(--transition);
     }
-    .remove-btn:hover { transform: scale(1.2); color: #a00; }
+    .remove-btn:hover { transform: scale(1.15); color: #a00; }
     .grand-total {
       text-align: right;
-      font-size: 1.3rem;
+      font-size: 1.1rem;
       font-weight: 700;
       color: var(--primary);
-      margin: 1rem 0 0.8rem;
+      margin: 0.8rem 0 0.6rem;
     }
-    /* Offer Page */
     .offer-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2rem;
-      margin-top: 1.5rem;
+      grid-template-columns: 1fr;
+      gap: 1.2rem;
+      margin-top: 1rem;
     }
     .offer-card {
       background: white;
       border-radius: var(--radius);
-      padding: 1.8rem;
+      padding: 1.2rem;
       box-shadow: var(--shadow);
       border: 2px solid var(--accent);
       transition: var(--transition);
     }
     .offer-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 20px 40px rgba(46,125,50,0.12);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 28px rgba(46,125,50,0.10);
     }
     .offer-card img {
       width: 100%;
-      height: 180px;
+      height: 150px;
       object-fit: cover;
-      border-radius: 12px;
-      margin-bottom: 1rem;
+      border-radius: 10px;
+      margin-bottom: 0.8rem;
     }
     .offer-card .offer-badge {
       background: var(--accent);
       color: #1a3a1a;
-      padding: 0.3rem 1rem;
-      border-radius: 40px;
+      padding: 0.2rem 0.8rem;
+      border-radius: 30px;
       font-weight: 700;
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       display: inline-block;
-      margin-bottom: 0.8rem;
+      margin-bottom: 0.5rem;
     }
     .offer-card h3 {
       color: var(--primary);
-      margin-bottom: 0.5rem;
-      font-size: 1.3rem;
+      margin-bottom: 0.3rem;
+      font-size: 1.1rem;
     }
     .offer-card .offer-price {
-      font-size: 1.6rem;
+      font-size: 1.3rem;
       font-weight: 700;
       color: var(--dark-green);
-      margin: 0.8rem 0;
+      margin: 0.5rem 0;
     }
     .offer-card .original-price {
       text-decoration: line-through;
       color: #999;
-      font-size: 1rem;
-      margin-left: 0.8rem;
+      font-size: 0.9rem;
+      margin-left: 0.5rem;
     }
     .offer-card .offer-desc {
       color: #4a5a4a;
-      margin-bottom: 1rem;
-      line-height: 1.5;
+      margin-bottom: 0.8rem;
+      line-height: 1.4;
+      font-size: 0.9rem;
     }
     .offer-card .offer-products {
       display: flex;
-      gap: 0.8rem;
+      gap: 0.5rem;
       flex-wrap: wrap;
-      margin: 0.8rem 0;
+      margin: 0.5rem 0;
     }
     .offer-card .offer-products span {
       background: var(--secondary);
-      padding: 0.3rem 0.8rem;
+      padding: 0.2rem 0.6rem;
       border-radius: 30px;
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       color: var(--primary);
     }
     .offer-card .btn-primary {
       width: 100%;
-      padding: 0.7rem;
-      font-size: 1rem;
+      padding: 0.6rem;
+      font-size: 0.9rem;
       justify-content: center;
     }
     .float-whatsapp {
       position: fixed;
-      bottom: 24px;
-      right: 24px;
+      bottom: 16px;
+      right: 16px;
       background: #25D366;
       color: white;
-      width: 60px;
-      height: 60px;
-      border-radius: 60px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.4rem;
-      box-shadow: 0 6px 24px rgba(37,211,102,0.4);
+      font-size: 2rem;
+      box-shadow: 0 4px 20px rgba(37,211,102,0.35);
       z-index: 999;
       text-decoration: none;
       transition: var(--transition);
       animation: pulse 2s infinite;
     }
-    .float-whatsapp:hover { transform: scale(1.08); background: #1fad5a; }
+    .float-whatsapp:hover { transform: scale(1.06); background: #1fad5a; }
     @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(37,211,102,0.4); }
-      70% { box-shadow: 0 0 0 14px rgba(37,211,102,0); }
+      0% { box-shadow: 0 0 0 0 rgba(37,211,102,0.35); }
+      70% { box-shadow: 0 0 0 12px rgba(37,211,102,0); }
       100% { box-shadow: 0 0 0 0 rgba(37,211,102,0); }
     }
     .footer {
       background: #1c321c;
       color: #d6dcc6;
-      padding: 2.5rem 1.5rem 1.5rem;
-      border-radius: 40px 40px 0 0;
-      margin-top: 3rem;
+      padding: 1.8rem 1rem 1.2rem;
+      border-radius: 24px 24px 0 0;
+      margin-top: 2rem;
       text-align: center;
+      font-size: 0.85rem;
     }
-    .footer i { color: var(--accent); margin: 0 4px; }
-    @media (max-width: 720px) {
-      .sticky-nav { flex-direction: column; gap: 0.6rem; padding: 0.8rem 1rem; }
-      .nav-links { gap: 1rem; justify-content: center; }
-      .bottom-banner { flex-direction: column; text-align: center; gap: 1.2rem; padding: 2rem 1.5rem; }
-      .carousel-track img { width: 240px; height: 150px; }
-      .logo-area img { height: 50px; }
-      .logo-title { font-size: 1.6rem; }
-      .heritage-image img { height: 150px; }
-    }
+    .footer i { color: var(--accent); margin: 0 3px; }
     .hidden { display: none !important; }
     .fade-up { animation: fadeUp 0.4s; }
     @keyframes fadeUp {
-      0% { opacity: 0; transform: translateY(12px); }
+      0% { opacity: 0; transform: translateY(10px); }
       100% { opacity: 1; transform: translateY(0); }
     }
     .section-title {
-      font-size: 1.8rem;
+      font-size: 1.3rem;
       color: var(--primary);
-      margin-bottom: 1rem;
-      border-left: 8px solid var(--accent);
-      padding-left: 1rem;
+      margin-bottom: 0.8rem;
+      border-left: 6px solid var(--accent);
+      padding-left: 0.8rem;
     }
-    /* product detail overlay */
     .detail-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.5);
-      backdrop-filter: blur(6px);
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(4px);
       z-index: 200;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 1.5rem;
+      padding: 1rem;
     }
     .detail-card {
       background: white;
-      max-width: 720px;
+      max-width: 100%;
       width: 100%;
       border-radius: var(--radius);
-      padding: 2rem;
-      box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+      padding: 1.5rem;
+      box-shadow: 0 24px 48px rgba(0,0,0,0.2);
       position: relative;
       max-height: 90vh;
       overflow-y: auto;
     }
     .detail-card .close-detail {
       position: absolute;
-      top: 16px;
-      right: 20px;
-      font-size: 1.8rem;
+      top: 12px;
+      right: 14px;
+      font-size: 1.5rem;
       cursor: pointer;
       color: #555;
       transition: var(--transition);
       background: none;
       border: none;
     }
-    .detail-card .close-detail:hover { color: #000; transform: scale(1.1); }
+    .detail-card .close-detail:hover { color: #000; transform: scale(1.08); }
     .detail-card img {
       width: 100%;
-      max-height: 340px;
+      max-height: 220px;
       object-fit: contain;
-      border-radius: 16px;
+      border-radius: 12px;
       background: #f0eadb;
     }
-    .detail-card h2 { color: var(--primary); margin: 0.8rem 0 0.2rem; }
-    .detail-card .price-lg { font-size: 1.8rem; font-weight: 700; color: var(--dark-green); margin: 0.5rem 0; }
-    .detail-card .desc { color: #2a3a2a; line-height: 1.6; margin: 0.8rem 0; }
-    .detail-card .ingredients { background: #f5f1e8; padding: 0.8rem 1.2rem; border-radius: 40px; display: inline-block; margin: 0.4rem 0; }
+    .detail-card h2 { 
+      color: var(--primary); 
+      margin: 0.6rem 0 0.2rem; 
+      font-size: 1.2rem;
+    }
+    .detail-card .price-lg { 
+      font-size: 1.4rem; 
+      font-weight: 700; 
+      color: var(--dark-green); 
+      margin: 0.3rem 0; 
+    }
+    .detail-card .desc { 
+      color: #2a3a2a; 
+      line-height: 1.5; 
+      margin: 0.5rem 0; 
+      font-size: 0.9rem;
+    }
+    .detail-card .ingredients { 
+      background: #f5f1e8; 
+      padding: 0.5rem 1rem; 
+      border-radius: 30px; 
+      display: inline-block; 
+      margin: 0.3rem 0; 
+      font-size: 0.85rem;
+    }
     .detail-card .qty-row {
       display: flex;
       align-items: center;
-      gap: 1.5rem;
-      margin: 1.2rem 0;
+      gap: 1rem;
+      margin: 0.8rem 0;
       flex-wrap: wrap;
     }
     .detail-card .qty-row button {
       background: var(--secondary);
       border: none;
-      width: 36px;
-      height: 36px;
-      border-radius: 40px;
-      font-size: 1.4rem;
+      width: 32px;
+      height: 32px;
+      border-radius: 30px;
+      font-size: 1.2rem;
       font-weight: 600;
       color: var(--primary);
       cursor: pointer;
     }
     .detail-card .qty-row button:hover { background: var(--accent); color: white; }
-    .detail-card .qty-row span { font-size: 1.4rem; font-weight: 600; min-width: 40px; text-align: center; }
+    .detail-card .qty-row span { 
+      font-size: 1.2rem; 
+      font-weight: 600; 
+      min-width: 32px; 
+      text-align: center; 
+    }
     .detail-actions {
       display: flex;
       flex-wrap: wrap;
-      gap: 1rem;
-      margin-top: 0.8rem;
+      gap: 0.6rem;
+      margin-top: 0.6rem;
     }
     .detail-actions .btn-primary, .detail-actions .btn-whatsapp {
-      padding: 0.8rem 2rem;
-      font-size: 1rem;
+      padding: 0.6rem 1.2rem;
+      font-size: 0.9rem;
       flex: 1 1 auto;
     }
-    /* back button */
+    .btn-pdf {
+      background: #d32f2f;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1 1 auto;
+    }
+    .btn-pdf:hover { background: #b71c1c; transform: scale(0.97); }
+    .btn-pdf:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
     .back-btn {
       display: inline-block;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
       color: var(--primary);
       text-decoration: none;
       font-weight: 600;
       cursor: pointer;
+      font-size: 0.9rem;
     }
-    .back-btn i { margin-right: 0.5rem; }
+    .back-btn i { margin-right: 0.4rem; }
     .back-btn:hover { color: var(--accent); }
+
+    /* PDF Screenshot style - clean version of detail card */
+    #pdfScreenshot {
+      position: fixed;
+      left: -9999px;
+      top: 0;
+      width: 800px;
+      background: white;
+      padding: 30px;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      z-index: -1;
+      border-radius: 12px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+    #pdfScreenshot img {
+      max-width: 100%;
+      max-height: 280px;
+      object-fit: contain;
+      border-radius: 12px;
+      border: 1px solid #e0e0e0;
+    }
+    #pdfScreenshot .header {
+      text-align: center;
+      border-bottom: 3px solid #2E7D32;
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+    }
+    #pdfScreenshot .header h1 {
+      color: #2E7D32;
+      font-size: 28px;
+      margin: 0;
+    }
+    #pdfScreenshot .header p {
+      color: #1B5E20;
+      font-size: 14px;
+      margin: 5px 0 0;
+    }
+    #pdfScreenshot .product-name {
+      color: #2E7D32;
+      font-size: 22px;
+      margin: 10px 0 5px;
+    }
+    #pdfScreenshot .price-box {
+      background: #e8f5e9;
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+    #pdfScreenshot .price-box p {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1B5E20;
+      margin: 0;
+    }
+    #pdfScreenshot .section-title {
+      color: #2E7D32;
+      font-size: 16px;
+      margin: 15px 0 5px;
+      font-weight: 600;
+    }
+    #pdfScreenshot .section-content {
+      color: #2a3a2a;
+      line-height: 1.6;
+      margin: 0 0 10px 0;
+    }
+    #pdfScreenshot .footer {
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 2px solid #e0e0e0;
+      text-align: center;
+      color: #5f6f5a;
+      font-size: 12px;
+      background: transparent !important;
+      border-radius: 0 !important;
+    }
+    #pdfScreenshot .footer p {
+      margin: 3px 0;
+    }
+
+    @media (min-width: 480px) {
+      .sticky-nav { padding: 0.6rem 1.5rem; }
+      .logo-area img { height: 45px; }
+      .logo-title { font-size: 1.5rem; }
+      .nav-links { gap: 1.2rem; font-size: 0.9rem; }
+      .container { padding: 1rem 1.2rem; }
+      .product-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.2rem; }
+      .product-card img { height: 130px; }
+      .about-grid { padding: 1.5rem; }
+      .heritage-image img { height: 180px; }
+      .bottom-banner { min-height: 160px; padding: 1.8rem; }
+      .bottom-banner h2 { font-size: 1.5rem; }
+      .offer-grid { grid-template-columns: repeat(2, 1fr); }
+      .offer-card img { height: 170px; }
+      .carousel-track img { width: 260px; height: 150px; }
+      .detail-card { max-width: 480px; }
+      .detail-card img { max-height: 260px; }
+    }
+
+    @media (min-width: 768px) {
+      .sticky-nav { padding: 0.8rem 2rem; }
+      .logo-area img { height: 55px; }
+      .logo-title { font-size: 1.8rem; }
+      .nav-links { gap: 1.8rem; font-size: 1rem; }
+      .nav-links a { font-size: 1rem; }
+      .container { padding: 1.5rem 2rem; }
+      .product-grid { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.5rem; }
+      .product-card img { height: 150px; }
+      .about-grid { 
+        padding: 2rem; 
+        flex-wrap: nowrap; 
+      }
+      .about-text { flex: 2; }
+      .heritage-image { flex: 1; }
+      .heritage-image img { height: 220px; }
+      .bottom-banner { 
+        flex-direction: row; 
+        text-align: left; 
+        min-height: 180px; 
+        padding: 2rem 2.5rem; 
+        justify-content: space-between;
+      }
+      .bottom-banner h2 { font-size: 1.8rem; }
+      .offer-grid { grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+      .offer-card img { height: 180px; }
+      .carousel-track img { width: 320px; height: 180px; }
+      .detail-card { max-width: 600px; }
+      .detail-card img { max-height: 300px; }
+    }
+
+    @media (min-width: 1024px) {
+      .carousel-track img { width: 380px; height: 200px; }
+      .product-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 2rem; }
+      .product-card img { height: 170px; }
+      .container { padding: 2rem 2.5rem; }
+      .bottom-banner h2 { font-size: 2.2rem; }
+      .detail-card { max-width: 720px; }
+      .detail-card img { max-height: 340px; }
+    }
   </style>
 </head>
 <body>
-  <!-- ============================================
-       PRODUCT 2: HTML STRUCTURE
-       ============================================ -->
   <!-- sticky nav -->
   <nav class="sticky-nav">
     <div class="logo-area">
@@ -632,24 +836,21 @@
   <div class="container" id="appContainer">
     <!-- HOME -->
     <div id="page-home">
-      <!-- carousel -->
       <div class="carousel-wrap" id="carouselWrapper">
         <div class="carousel-track" id="carouselTrack"></div>
       </div>
-      <!-- About -->
       <section>
         <div class="about-grid">
           <div class="about-text">
             <h2><i class="fas fa-spa" style="color: var(--accent);"></i> Pure Ayurveda</h2>
             <p>ĀyurVana brings you time-honoured herbal formulations rooted in ancient wisdom. Every product is crafted with care, using sustainably sourced ingredients to balance body, mind, and spirit.</p>
-            <p style="margin-top:0.8rem;"><i class="fas fa-seedling" style="color:var(--primary);"></i> 100% natural · no additives · trust since 1989</p>
+            <p style="margin-top:0.5rem;"><i class="fas fa-seedling" style="color:var(--primary);"></i> 100% natural · no additives · trust since 1989</p>
           </div>
           <div class="heritage-image">
             <img src="images/heritage.jpg" alt="Heritage wellness">
           </div>
         </div>
       </section>
-      <!-- bottom banner (long banner with image) -->
       <div class="bottom-banner" id="longBanner">
         <img src="images/banner1.jpg" alt="Ayurvedic wellness banner">
         <h2>🌿 <strong>Ayurvedic</strong> wellness for everyone</h2>
@@ -666,7 +867,7 @@
       <div class="product-grid" id="productGrid"></div>
     </div>
 
-    <!-- OFFERS PAGE -->
+    <!-- OFFERS -->
     <div id="page-offers" class="hidden">
       <a class="back-btn" data-page="home"><i class="fas fa-arrow-left"></i> Back to Home</a>
       <h2 class="section-title"><i class="fas fa-tags" style="color:var(--accent);"></i> Special Offers</h2>
@@ -676,12 +877,12 @@
     <!-- NEWS -->
     <div id="page-news" class="hidden">
       <h2 class="section-title"><i class="fas fa-bullhorn" style="color:var(--accent);"></i> News & updates</h2>
-      <div style="background:white; padding:1.8rem; border-radius:var(--radius); box-shadow:var(--shadow);">
-        <div style="display:flex; flex-direction:column; gap:1.2rem;">
-          <div><i class="fas fa-tag" style="color:var(--accent);"></i> <strong>New offer:</strong> 20% off on Triphala Churna this month</div>
-          <div><i class="fas fa-flask" style="color:var(--accent);"></i> <strong>New product:</strong> Brahmi Brain Tonic – coming soon</div>
-          <div><i class="fas fa-heartbeat" style="color:var(--accent);"></i> <strong>Health tip:</strong> Drink warm water with Giloy juice for immunity</div>
-          <div style="background:#f0f7ea; padding:0.8rem 1.2rem; border-radius:60px; font-size:0.95rem; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;">
+      <div style="background:white; padding:1.2rem; border-radius:var(--radius); box-shadow:var(--shadow);">
+        <div style="display:flex; flex-direction:column; gap:0.8rem;">
+          <div style="font-size:0.9rem;"><i class="fas fa-tag" style="color:var(--accent);"></i> <strong>New offer:</strong> 20% off on Triphala Churna this month</div>
+          <div style="font-size:0.9rem;"><i class="fas fa-flask" style="color:var(--accent);"></i> <strong>New product:</strong> Brahmi Brain Tonic – coming soon</div>
+          <div style="font-size:0.9rem;"><i class="fas fa-heartbeat" style="color:var(--accent);"></i> <strong>Health tip:</strong> Drink warm water with Giloy juice for immunity</div>
+          <div style="background:#f0f7ea; padding:0.6rem 1rem; border-radius:40px; font-size:0.85rem; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;">
             <i class="fas fa-arrow-right" style="color:var(--primary);"></i> 🌱 Auto‑scroll: Ayurveda daily routine – Dinacharya guide available
           </div>
         </div>
@@ -693,15 +894,15 @@
       <h2 class="section-title"><i class="fas fa-shopping-bag"></i> MyKart</h2>
       <div class="cart-section">
         <div id="cartItemsContainer"></div>
-        <div id="cartSummary" style="margin-top:0.8rem; border-top:2px dashed #d9d0bd; padding-top:0.8rem;">
-          <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.4rem;">
+        <div id="cartSummary" style="margin-top:0.6rem; border-top:2px dashed #d9d0bd; padding-top:0.6rem;">
+          <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.3rem; font-size:0.9rem;">
             <span>Subtotal: <strong id="cartSubtotal">₹0</strong></span>
             <span>GST (12%): <strong id="cartGst">₹0</strong></span>
             <span>Delivery: <strong id="cartDelivery">₹0</strong></span>
           </div>
           <div class="grand-total" id="grandTotal">Grand Total: ₹0</div>
         </div>
-        <button class="btn-primary" id="buyCartWhatsApp" style="width:100%; padding:0.9rem; font-size:1.1rem;"><i class="fab fa-whatsapp"></i> Buy Entire Cart via WhatsApp</button>
+        <button class="btn-primary" id="buyCartWhatsApp" style="width:100%; padding:0.7rem; font-size:0.95rem;"><i class="fab fa-whatsapp"></i> Buy Entire Cart via WhatsApp</button>
       </div>
     </div>
   </div>
@@ -709,7 +910,7 @@
   <!-- floating WhatsApp -->
   <a href="https://wa.me/917770975666" target="_blank" class="float-whatsapp"><i class="fab fa-whatsapp"></i></a>
 
-  <!-- product detail overlay (hidden) -->
+  <!-- product detail overlay -->
   <div id="productDetailOverlay" class="detail-overlay hidden">
     <div class="detail-card" id="detailCard">
       <button class="close-detail" id="closeDetail"><i class="fas fa-times"></i></button>
@@ -726,14 +927,18 @@
       <div class="detail-actions">
         <button class="btn-primary" id="detailAddCart"><i class="fas fa-cart-plus"></i> Add to Cart</button>
         <button class="btn-whatsapp" id="detailBuyNow"><i class="fab fa-whatsapp"></i> Buy Now</button>
+        <button class="btn-pdf" id="downloadPdfBtn"><i class="fas fa-file-pdf"></i> Download PDF</button>
       </div>
     </div>
   </div>
 
+  <!-- Hidden PDF Screenshot Container -->
+  <div id="pdfScreenshot"></div>
+
   <footer class="footer">
     <p><i class="fas fa-leaf"></i> ĀyurVana – heritage wellness since 1989</p>
-    <p style="margin-top:0.6rem; font-size:0.9rem; opacity:0.8;"><i class="fas fa-phone"></i> +91 77709 75666  ·  <i class="fas fa-envelope"></i> ayur@vana.in</p>
-    <p style="margin-top:1.2rem; font-size:0.8rem;">© 2026 · crafted with <i class="fas fa-heart" style="color:#bf6f6f;"></i></p>
+    <p style="margin-top:0.4rem; font-size:0.8rem; opacity:0.8;"><i class="fas fa-phone"></i> +91 77709 75666  ·  <i class="fas fa-envelope"></i> ayur@vana.in</p>
+    <p style="margin-top:0.8rem; font-size:0.75rem;">© 2026 · crafted with <i class="fas fa-heart" style="color:#bf6f6f;"></i></p>
   </footer>
 
   <script>
@@ -741,11 +946,8 @@
     // PRODUCT 3: JAVASCRIPT - DATA & LOGIC
     // ============================================
 
-    // ---- PRODUCT DATA (EASY TO ADD/EDIT) ----
-    // To add a new product, copy a product object and change the values.
-    // Make sure id is unique and image exists in images/ folder.
+    // ---- PRODUCT DATA ----
     const products = [
-      // PRODUCT 1: Ashwagandha Capsules
       { 
         id: 1, 
         name: 'Ashwagandha Capsules', 
@@ -755,7 +957,6 @@
         desc: 'Supports stress relief, vitality, and rejuvenation. Used for centuries in Ayurveda.',
         ingredients: 'Ashwagandha root extract, organic honey, ghee.' 
       },
-      // PRODUCT 2: Triphala Churna
       { 
         id: 2, 
         name: 'Triphala Churna', 
@@ -765,7 +966,6 @@
         desc: 'Gentle detoxification and digestive support. Balances all three doshas.',
         ingredients: 'Amalaki, Bibhitaki, Haritaki – organic.' 
       },
-      // PRODUCT 3: Giloy Juice
       { 
         id: 3, 
         name: 'Giloy Juice', 
@@ -775,7 +975,6 @@
         desc: 'Immunity booster, fever management, and overall wellness.',
         ingredients: 'Fresh Giloy stem extract, purified water, turmeric.' 
       },
-      // PRODUCT 4: Aloe Vera Juice
       { 
         id: 4, 
         name: 'Aloe Vera Juice', 
@@ -784,36 +983,11 @@
         img: 'images/product4.jpg',
         desc: 'Soothes digestion, supports skin health, and detoxifies the body.',
         ingredients: 'Aloe vera gel, lemon juice, natural preservative.' 
-      },
-// PRODUCT 5: KAMASTURTRA
-      { 
-        id: 5, 
-        name: 'KAMADIPATI', 
-        generic: 'Tinospora cordifolia', 
-        price: 2200, 
-        img: 'images/product5.jpg',
-        desc: 'Immunity booster, fever management, and overall wellness.',
-        ingredients: 'Fresh Giloy stem extract, purified water, turmeric.' 
-      },
-//eND HERE
-      // ===== ADD NEW PRODUCTS BELOW =====
-      // To add a new product, uncomment and modify:
-      // ,{ 
-      //   id: 5, 
-      //   name: 'Your Product Name', 
-      //   generic: 'Scientific name', 
-      //   price: 299, 
-      //   img: 'images/product5.jpg',
-      //   desc: 'Product description here.',
-      //   ingredients: 'List of ingredients.'
-      // }
+      }
     ];
 
-    // ---- OFFER DATA (EASY TO ADD/EDIT) ----
-    // To add a new offer, copy an offer object and change the values.
-    // Make sure id is unique and image exists in images/ folder.
+    // ---- OFFER DATA ----
     const offers = [
-      // OFFER 1: Wellness Combo
       {
         id: 1,
         title: 'Wellness Combo',
@@ -824,7 +998,6 @@
         offerPrice: 399,
         badge: 'Save ₹71'
       },
-      // OFFER 2: Digestive Care Pack
       {
         id: 2,
         title: 'Digestive Care Pack',
@@ -835,7 +1008,6 @@
         offerPrice: 329,
         badge: 'Save ₹50'
       },
-      // OFFER 3: Ultimate Wellness Kit
       {
         id: 3,
         title: 'Ultimate Wellness Kit',
@@ -846,18 +1018,6 @@
         offerPrice: 699,
         badge: 'Save ₹150'
       }
-      // ===== ADD NEW OFFERS BELOW =====
-      // To add a new offer, uncomment and modify:
-      // ,{
-      //   id: 4,
-      //   title: 'New Offer Title',
-      //   image: 'images/offer4.jpg',
-      //   description: 'Offer description here.',
-      //   products: ['Product 1', 'Product 2'],
-      //   originalPrice: 500,
-      //   offerPrice: 399,
-      //   badge: 'Save ₹101'
-      // }
     ];
 
     // ---- CART ----
@@ -926,7 +1086,7 @@
       const grid = document.getElementById('productGrid');
       const filtered = products.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()) || p.generic.toLowerCase().includes(filter.toLowerCase()));
       if (!filtered.length) {
-        grid.innerHTML = `<p style="grid-column:1/-1; text-align:center; padding:2rem;">🌿 no products match</p>`;
+        grid.innerHTML = `<p style="grid-column:1/-1; text-align:center; padding:1.5rem; color:#5a6a4a;">🌿 no products match</p>`;
         return;
       }
       grid.innerHTML = filtered.map(p => {
@@ -998,12 +1158,12 @@
       renderCart();
     }
 
-    // ---- CART RENDER with GST & Delivery ----
+    // ---- CART RENDER ----
     function renderCart() {
       const container = document.getElementById('cartItemsContainer');
       if (!container) return;
       if (cart.length === 0) {
-        container.innerHTML = `<p style="color:#5a6a4a;"><i class="fas fa-box-open"></i> Your cart is empty.</p>`;
+        container.innerHTML = `<p style="color:#5a6a4a; font-size:0.95rem;"><i class="fas fa-box-open"></i> Your cart is empty.</p>`;
         document.getElementById('cartSubtotal').innerText = '₹0';
         document.getElementById('cartGst').innerText = '₹0';
         document.getElementById('cartDelivery').innerText = '₹0';
@@ -1021,15 +1181,15 @@
           <div class="cart-item" data-id="${item.id}">
             <div class="cart-item-info">
               <img src="${product.img}" alt="${product.name}">
-              <div><strong>${product.name}</strong> <span style="font-size:0.8rem; color:#4f604a;">₹${product.price}</span></div>
+              <div><strong>${product.name}</strong> <span style="font-size:0.75rem; color:#4f604a;">₹${product.price}</span></div>
             </div>
-            <div style="display:flex; align-items:center; gap: 1rem;">
+            <div style="display:flex; align-items:center; gap: 0.6rem;">
               <div class="cart-qty">
                 <button class="cart-qty-minus" data-id="${item.id}">−</button>
                 <span>${item.qty}</span>
                 <button class="cart-qty-plus" data-id="${item.id}">+</button>
               </div>
-              <span style="font-weight:600; min-width:60px;">₹${st}</span>
+              <span style="font-weight:600; min-width:50px; font-size:0.9rem;">₹${st}</span>
               <button class="remove-btn" data-id="${item.id}"><i class="fas fa-trash-alt"></i></button>
             </div>
           </div>
@@ -1068,10 +1228,12 @@
     // ---- PRODUCT DETAIL OVERLAY ----
     let detailProductId = null;
     let detailQty = 1;
+    let currentDetailProduct = null;
 
     function openDetail(id) {
       const product = getProductById(id);
       if (!product) return;
+      currentDetailProduct = product;
       detailProductId = id;
       detailQty = 1;
       document.getElementById('detailImage').src = product.img;
@@ -1124,6 +1286,93 @@
       closeDetail();
     });
 
+    // ---- PDF DOWNLOAD: SCREENSHOT OF DETAIL POPUP ----
+    document.getElementById('downloadPdfBtn').addEventListener('click', function() {
+      if (!currentDetailProduct) {
+        alert('Please open a product first.');
+        return;
+      }
+
+      const btn = this;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating PDF...';
+      btn.disabled = true;
+
+      const product = currentDetailProduct;
+
+      // Create clean screenshot content
+      const screenshotContainer = document.getElementById('pdfScreenshot');
+      screenshotContainer.innerHTML = `
+        <div class="header">
+          <h1>ĀyurVana</h1>
+          <p>Ayurvedic Wellness</p>
+        </div>
+        
+        <div style="text-align: center; margin-bottom: 15px;">
+          <img src="${product.img}" alt="${product.name}" crossorigin="anonymous">
+        </div>
+        
+        <h2 class="product-name">${product.name}</h2>
+        <p style="color: #5f6f5a; font-size: 14px; margin: 0 0 10px;"><strong>Botanical Name:</strong> ${product.generic}</p>
+        
+        <div class="price-box">
+          <p>Price: ₹${product.price}</p>
+        </div>
+        
+        <h3 class="section-title">Description</h3>
+        <p class="section-content">${product.desc}</p>
+        
+        <h3 class="section-title">Ingredients</h3>
+        <p class="section-content">${product.ingredients}</p>
+        
+        <h3 class="section-title">Product Details</h3>
+        <p class="section-content">
+          <strong>Product ID:</strong> #${String(product.id).padStart(3, '0')}<br>
+          <strong>Category:</strong> Ayurvedic Supplement<br>
+          <strong>Form:</strong> ${product.name.includes('Capsules') ? 'Capsules' : product.name.includes('Churna') ? 'Powder' : 'Juice'}<br>
+          <strong>Origin:</strong> India
+        </p>
+        
+        <div class="footer">
+          <p><strong>ĀyurVana</strong> · Heritage Wellness Since 1989</p>
+          <p>Contact: +91 77709 75666 · ayur@vana.in</p>
+          <p style="color: #999; font-size: 10px;">This document is for informational purposes only.</p>
+        </div>
+      `;
+
+      // Wait for image to render, then take screenshot
+      setTimeout(function() {
+        html2canvas(screenshotContainer, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          logging: false,
+          backgroundColor: '#ffffff',
+          width: 800,
+          height: screenshotContainer.scrollHeight
+        }).then(function(canvas) {
+          const imgData = canvas.toDataURL('image/jpeg', 0.95);
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF('p', 'mm', 'a4');
+          const pdfWidth = pdf.internal.pageSize.getWidth();
+          const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+          
+          pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+          pdf.save(product.name.replace(/\s+/g, '_') + '_Details.pdf');
+          
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+          screenshotContainer.innerHTML = '';
+        }).catch(function(err) {
+          console.error('PDF Generation Error:', err);
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+          screenshotContainer.innerHTML = '';
+          alert('Could not generate PDF. Please try again.');
+        });
+      }, 800);
+    });
+
     // ---- BUY ENTIRE CART ----
     document.getElementById('buyCartWhatsApp').addEventListener('click', function() {
       if (cart.length === 0) { alert('Cart is empty'); return; }
@@ -1134,13 +1383,13 @@
         if (!p) return;
         const st = p.price * item.qty;
         subtotal += st;
-        msg += `%0A${p.name}  ×${item.qty}  = ₹${st}`;
+        msg += '%0A' + p.name + '  x' + item.qty + '  = ₹' + st;
       });
       const delivery = 40;
       const gst = subtotal * 0.12;
       const grand = subtotal + gst + delivery;
-      msg += `%0A%0ASubtotal: ₹${subtotal.toFixed(2)}%0AGST (12%): ₹${gst.toFixed(2)}%0ADelivery: ₹${delivery.toFixed(2)}%0AGrand Total: ₹${grand.toFixed(2)}%0A%0APlease confirm.`;
-      window.open(`https://wa.me/917770975666?text=${msg}`, '_blank');
+      msg += '%0A%0ASubtotal: ₹' + subtotal.toFixed(2) + '%0AGST (12%): ₹' + gst.toFixed(2) + '%0ADelivery: ₹' + delivery.toFixed(2) + '%0AGrand Total: ₹' + grand.toFixed(2) + '%0A%0APlease confirm.';
+      window.open('https://wa.me/917770975666?text=' + msg, '_blank');
     });
 
     // ---- SEARCH ----
@@ -1156,10 +1405,10 @@
     function navigateTo(page) {
       navLinks.forEach(l => l.classList.remove('active'));
       pages.forEach(p => {
-        const el = document.getElementById(`page-${p}`);
+        const el = document.getElementById('page-' + p);
         if (el) el.classList.add('hidden');
       });
-      const target = document.getElementById(`page-${page}`);
+      const target = document.getElementById('page-' + page);
       if (target) target.classList.remove('hidden');
       navLinks.forEach(link => {
         if (link.dataset.page === page) link.classList.add('active');
@@ -1193,7 +1442,7 @@
 
     document.getElementById('searchIcon').addEventListener('click', function() {
       navigateTo('products');
-      setTimeout(() => document.getElementById('productSearchInput').focus(), 200);
+      setTimeout(function() { document.getElementById('productSearchInput').focus(); }, 200);
     });
 
     // ---- INIT ----
